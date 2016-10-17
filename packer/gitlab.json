@@ -1,0 +1,26 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "aws_region": "eu-west-1"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{ user 'aws_access_key' }}",
+      "secret_key": "{{ user 'aws_secret_key' }}",
+      "region":     "{{ user 'aws_region' }}",
+      "source_ami": "ami-c593deb6",
+      "instance_type": "t2.micro",
+      "ssh_username": "ubuntu",
+      "ami_name": "gitlab CE {{ timestamp }}"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/install_ansible.sh"
+    }
+  ]
+}
