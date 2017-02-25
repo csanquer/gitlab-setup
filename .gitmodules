@@ -1,0 +1,36 @@
+[submodule "roles/account"]
+	path = roles/account
+	url = https://github.com/csanquer/ansible-role-account.git
+[submodule "roles/aws"]
+	path = roles/aws
+	url = https://github.com/csanquer/ansible-role-aws.git
+[submodule "roles/dnsmasq"]
+	path = roles/dnsmasq
+	url = https://github.com/csanquer/ansible-role-dnsmasq.git
+[submodule "roles/docker"]
+	path = roles/docker
+	url = https://github.com/csanquer/ansible-role-docker.git
+[submodule "roles/locales"]
+	path = roles/locales
+	url = https://github.com/csanquer/ansible-role-locales.git
+[submodule "roles/network"]
+	path = roles/network
+	url = https://github.com/csanquer/ansible-role-network.git
+[submodule "roles/nfs"]
+	path = roles/nfs
+	url = https://github.com/csanquer/ansible-role-nfs.git
+[submodule "roles/packages"]
+	path = roles/packages
+	url = https://github.com/csanquer/ansible-role-packages.git
+[submodule "roles/python"]
+	path = roles/python
+	url = https://github.com/csanquer/ansible-role-python.git
+[submodule "roles/sshd"]
+	path = roles/sshd
+	url = https://github.com/csanquer/ansible-role-sshd.git
+[submodule "roles/gitlab"]
+	path = roles/gitlab
+	url = https://github.com/csanquer/ansible-role-gitlab.git
+[submodule "roles/gitlab-runner"]
+	path = roles/gitlab-runner
+	url = https://github.com/csanquer/ansible-role-gitlab-runner.git
