@@ -1,0 +1,11 @@
+---
+gitlab_external_url: "${gitlab_external_url}"
+gitlab_db_name: "${gitlab_db_name}"
+gitlab_db_username: "${gitlab_db_username}"
+gitlab_db_password: "${gitlab_db_password}"
+gitlab_root_password: "${gitlab_root_password}"
+gitlab_ci_registration_token: "${gitlab_ci_registration_token}"
+gitlab_db_host: "${gitlab_db_host}"
+gitlab_db_port: ${gitlab_db_port}
+gitlab_cache_host: "${gitlab_cache_host}"
+gitlab_cache_port: ${gitlab_cache_port}

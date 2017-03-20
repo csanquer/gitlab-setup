@@ -1,0 +1,14 @@
+---
+- name: gitlab install
+  hosts: gitlab
+  connection: local
+  become: yes
+  become_method: sudo
+
+  roles:
+    - packages
+    - locales
+    - nfs
+    - aws
+    - account
+    - gitlab

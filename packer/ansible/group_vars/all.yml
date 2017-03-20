@@ -1,0 +1,174 @@
+---
+locale_generate:
+    - { lang: 'en_US', charset: 'UTF-8' }
+    - { lang: 'fr_FR', charset: 'UTF-8' }
+
+locale_timezone_continent: Etc
+locale_timezone_city: UTC
+
+locale_default_lang: en_US
+locale_default_charset: UTF-8
+#
+# network_hostname: 'vagrant.vm'
+# network_hosts:
+#   -
+#     ip: '127.0.0.1'
+#     names: ['vagrant', 'vagrant.localhost', 'vagrant.local', 'vagrant.localhost.com', 'vagrant.local.com']
+#
+network_dns_resolv_reconfigure: false
+# network_resolv_nameservers:
+#     - '8.8.8.8'
+#     - '8.8.4.4'
+#
+network_interfaces_reconfigure: false
+network_interfaces_restart: false
+# network_interfaces:
+#     enp0s3:
+#         comment: The primary network interface
+#         general_options:
+#           'pre-up': 'sleep 2'
+#         allow: []
+#         type: dhcp
+#         options: {}
+#
+# sudo_files:
+#   - { sudogroup: 'vagrant', command_user: 'ALL', nopasswd_commands: ['ALL'] }
+#
+account_groups:
+  ubuntu: {}
+    # gid: 1000
+    # system: false
+  # docker:
+  #   gid: 998
+  #   system: true
+
+account_users:
+  ubuntu:
+    name: ubuntu
+    # comment: 'ubuntu admin user'
+    group: ubuntu
+    groups:
+      - adm
+      - dialout
+      - cdrom
+      - floppy
+      - sudo
+      - audio
+      - dip
+      - video
+      - plugdev
+      - netdev
+      - lxd
+    # uid: 1000
+    config_files:
+      -
+        src: home/{{ ansible_os_family|lower }}/.bashrc.j2
+        dest: .bashrc
+        backup: yes
+        force: yes
+      -
+        src: home/.bash_aliases.j2
+        dest: .bash_aliases
+        backup: yes
+        force: yes
+      -
+        src: home/.zshrc.j2
+        dest: .zshrc
+        backup: yes
+        force: yes
+      -
+        src: etc/skel/.git-prompt-colors.sh.j2
+        dest: .git-prompt-colors.sh
+        backup: yes
+        force: no
+      -
+        src: etc/skel/.gitconfig.j2
+        dest: .gitconfig
+        backup: yes
+        force: no
+      -
+        src: etc/skel/.gitignore.j2
+        dest: .gitignore
+        backup: yes
+        force: no
+    gitconfig: []
+      # - { name: 'user.name', option: 'Martin Dupond'}
+      # - { name: 'user.email', option: 'martin.dupond@example.com'}
+    bash_aliases: {}
+      # <alias>: <command>
+#
+# account_env_vars:
+#   vagrant: {}
+#   # <username>:
+#   #     <key>: <value>
+#
+# account_user_passwords:
+#     vagrant: vagrant
+#
+# account_url_authorized_keys:
+#   -
+#     name: vagrant
+#     urls:
+#       - 'https://raw.githubusercontent.com/mitchellh/vagrant/master/keys/vagrant.pub'
+#
+# samba_users:
+#   vagrant: vagrant
+#
+# # samba_shares:
+# #   -
+# #     name: share
+# #     path: /home/vagrant/share
+# #     owner: vagrant
+# #     group: vagrant
+#
+# # nfs_exports_enabled: true
+# # nfs_exports:
+# #   -
+# #     path: /home/vagrant/share
+# #     default_options: []
+# #     clients:
+# #       -
+# #         host: '10.0.2.0/24'
+# #         options:
+# #           - rw
+# #           - async
+# #           - all_squash
+# #           - 'anonuid=1000'
+# #           - 'anongid=1000'
+# #           - no_subtree_c‌​heck
+# #       -
+# #         host: '192.168.0.0/16'
+# #         options:
+# #           - rw
+# #           - async
+# #           - all_squash
+# #           - 'anonuid=1000'
+# #           - 'anongid=1000'
+# #           - no_subtree_c‌​heck
+#
+# docker_allowed_user:
+#   - vagrant
+
+apt_sources_replace: false
+apt_update_boot: true
+apt_upgrade: true
+apt_upgrade_type: full
+apt_extra_packages:
+  - linux-generic
+  - linux-headers-generic
+  - "linux-headers-{{ ansible_kernel }}"
+  - "linux-image-extra-{{ ansible_kernel }}"
+  - dkms
+  - openssh-blacklist
+  - openssh-blacklist-extra
+  - openssl-blacklist
+  - openssl-blacklist-extra
+  - git-extras
+  - zsh
+  - jq
+
+aws_eb_cli_enabled: false
+aws_ecs_cli_enabled: false
+
+python_pip2_packages:
+    - { name: 'jinja2-cli[yaml]'}

@@ -1,0 +1,8 @@
+---
+account_groups:
+  ubuntu: {}
+  #   gid: 1000
+  #   system: false
+  docker:
+    gid: 998
+    system: true

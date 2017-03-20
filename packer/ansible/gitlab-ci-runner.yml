@@ -1,0 +1,14 @@
+---
+- name: gitlab-ci runner install
+  hosts: gitlab-ci-runners
+  connection: local
+  become: yes
+  become_method: sudo
+
+  roles:
+    - packages
+    - locales
+    - account
+    - docker
+    - aws
+    - gitlab-runner

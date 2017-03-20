@@ -1,1 +1,4 @@
-ami_config.json
+/packer/config.json
+/terraform/terraform.tfvars
+/terraform/terraform.tfstate
+/terraform/terraform.tfstate.backup

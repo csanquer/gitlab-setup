@@ -13,11 +13,11 @@
       "source_ami": "ami-81f8d4e7",
       "instance_type": "t2.micro",
       "ssh_username": "ubuntu",
-      "ami_name": "gitlab-{{isotime \"20060102\"}}",
-      "ami_description": "Gitlab CE",
+      "ami_name": "gitlab-ci-runner-{{isotime \"20060102\"}}",
+      "ami_description": "Gitlab CI runner",
       "tags": {
-        "application": "gitlab",
-        "version": "8.17.3",
+        "application": "gitlab-ci-runner",
+        "version": "1.11.1",
         "os": "ubuntu",
         "os_release": "16.04"
       }
@@ -33,13 +33,14 @@
       "extra_arguments": ["-vv"],
       "playbook_dir": "ansible",
       "group_vars": "ansible/group_vars",
-      "inventory_groups": "gitlab",
-      "playbook_file": "ansible/gitlab.yml",
+      "inventory_groups": "gitlab-ci-runners",
+      "playbook_file": "ansible/gitlab-ci-runner.yml",
       "role_paths": [
         "../roles/account",
         "../roles/aws",
         "../roles/network",
-        "../roles/gitlab",
+        "../roles/docker",
+        "../roles/gitlab-runner",
         "../roles/locales",
         "../roles/network",
         "../roles/nfs",

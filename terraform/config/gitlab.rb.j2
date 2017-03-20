@@ -1,0 +1,21 @@
+external_url '{{ gitlab_external_url }}'
+
+gitlab_rails['time_zone'] = 'Europe/Paris'
+
+gitlab_rails['initial_root_password'] = "{{ gitlab_root_password }}"
+gitlab_rails['initial_shared_runners_registration_token'] = "{{ gitlab_ci_registration_token }}"
+
+postgresql['enable'] = false
+gitlab_rails['db_adapter'] = "postgresql"
+gitlab_rails['db_encoding'] = "utf8"
+gitlab_rails['db_database'] = "{{ gitlab_db_name }}"
+gitlab_rails['db_username'] = "{{ gitlab_db_username }}"
+gitlab_rails['db_password'] = "{{ gitlab_db_password }}"
+gitlab_rails['db_host'] = "{{ gitlab_db_host }}"
+gitlab_rails['db_port'] = {{ gitlab_db_port }}
+
+redis['enable'] = false
+gitlab_rails['redis_host'] = "{{ gitlab_cache_host }}"
+gitlab_rails['redis_port'] = {{ gitlab_cache_port }}
+
+high_availability['mountpoint'] = '/var/opt/gitlab'
