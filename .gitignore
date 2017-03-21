@@ -4,3 +4,4 @@
 /terraform/terraform.tfstate.backup
 /tmp_ssh_host_keys
 /terraform/ssh_host_keys.tar.gz
+.terraform.tfstate.lock.info
