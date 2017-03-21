@@ -154,7 +154,7 @@ resource "aws_db_instance" "gitlab" {
   storage_type              = "gp2"
   publicly_accessible       = true
   final_snapshot_identifier = "gitlab-db"
-  skip_final_snapshot       = false
+  skip_final_snapshot       = true
   copy_tags_to_snapshot     = true
   backup_retention_period   = 1
   apply_immediately         = true

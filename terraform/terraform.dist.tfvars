@@ -14,3 +14,4 @@ gitlab_root_password =
 gitlab_ci_registration_token =
 
 aws_dns_zone =
+gitlab_dns_subdomain = "gitlab"

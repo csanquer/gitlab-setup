@@ -1,4 +1,6 @@
-gitlab_external_url="${gitlab_external_url}"
+gitlab_external_host="${gitlab_external_host}"
+gitlab_external_url="${gitlab_external_protocol}://${gitlab_external_host}"
+gitlab_data_mountpoint="${gitlab_data_mountpoint}"
 gitlab_db_host="${gitlab_db_host}"
 gitlab_db_port="${gitlab_db_port}"
 gitlab_cache_host="${gitlab_cache_host}"

@@ -17,7 +17,7 @@
       "ami_description": "Gitlab CE",
       "tags": {
         "application": "gitlab",
-        "version": "8.17.3",
+        "version": "8.17.4",
         "os": "ubuntu",
         "os_release": "16.04"
       }

@@ -20,17 +20,20 @@ scriptDir=$(dirname "$scriptCall")
 # script base name
 scriptName=$(basename "$scriptCall")
 
-
-gitlab_dir=/var/opt/gitlab
+# get instance config variables
 source $scriptDir/gitlab_env.sh
 
-mkdir -p $gitlab_dir
-# chown git:root $gitlab_dir
+# copy same ssh host keys to all gitlab instance
+rm -f /etc/ssh/ssh_host_*
+tar -xvzf $scriptDir/ssh_host_keys.tar.gz -C /etc/ssh/
+chown -R root:root /etc/ssh/
+service ssh restart
 
-echo "$gitlab_nfs_host:/ $gitlab_dir nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 0 0" >> /etc/fstab
+# mount gitlab data nfs volume
+mkdir -p $gitlab_data_mountpoint
+echo "$gitlab_nfs_host:/ $gitlab_data_mountpoint nfs4 nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 0 0" >> /etc/fstab
 mount -a -t nfs4
 
+# generate gitlab config file and reconfigure gitlab server
 jinja2 $scriptDir/gitlab.rb.j2 $scriptDir/gitlab_env.yml > /etc/gitlab/gitlab.rb
-
-#sudo gitlab-ctl reconfigure
-#sudo gitlab-ctl restart
+gitlab-ctl reconfigure

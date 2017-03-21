@@ -2,3 +2,5 @@
 /terraform/terraform.tfvars
 /terraform/terraform.tfstate
 /terraform/terraform.tfstate.backup
+/tmp_ssh_host_keys
+/terraform/ssh_host_keys.tar.gz

@@ -14,6 +14,11 @@ variable "aws_dns_zone" {
   description = "AWS Route53 zone"
 }
 
+variable "gitlab_dns_subdomain" {
+  description = "AWS Route53 zone"
+  default     = "gitlab"
+}
+
 variable "aws_az1" {
   description = "AWS EC2 availability zone 2"
   default     = "eu-west-1a"
@@ -52,6 +57,26 @@ variable "private2_subnet_cidr" {
 variable "sg_ssh_cidr" {
   description = "CIDR allowed for SSH connection to public subnet"
   default     = "0.0.0.0/0"
+}
+
+variable "gitlab_max" {
+  description = "Gitlab maximum instance number"
+  default     = 3
+}
+
+variable "gitlab_min" {
+  description = "Gitlab minimum instance number"
+  default     = 1
+}
+
+variable "gitlab_desired" {
+  description = "Gitlab desired instance number"
+  default     = 2
+}
+
+variable "gitlab_data_mountpoint" {
+  description = "Gitlab NFS mount point directory to be shared between instances"
+  default     = "/gitlab-data"
 }
 
 variable "gitlab_db_name" {

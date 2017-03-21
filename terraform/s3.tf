@@ -25,7 +25,9 @@ data "template_file" "gitlab_env_yml" {
     template = "${file("${path.cwd}/config/gitlab_env.yml")}"
 
     vars {
-        gitlab_external_url = ""
+        gitlab_external_protocol = "http"
+        gitlab_external_host = "${var.gitlab_dns_subdomain}.${var.aws_dns_zone}"
+        gitlab_data_mountpoint = "${var.gitlab_data_mountpoint}"
         gitlab_db_name = "${var.gitlab_db_name}"
         gitlab_db_username = "${var.gitlab_db_username}"
         gitlab_db_password = "${var.gitlab_db_password}"
@@ -42,7 +44,9 @@ data "template_file" "gitlab_env_sh" {
     template = "${file("${path.cwd}/config/gitlab_env.sh")}"
 
     vars {
-        gitlab_external_url = ""
+        gitlab_external_protocol = "http"
+        gitlab_external_host = "${var.gitlab_dns_subdomain}.${var.aws_dns_zone}"
+        gitlab_data_mountpoint = "${var.gitlab_data_mountpoint}"
         gitlab_db_host = "${aws_db_instance.gitlab.address}"
         gitlab_db_port = "${aws_db_instance.gitlab.port}"
         gitlab_cache_host = "${aws_elasticache_cluster.gitlab_cache.cache_nodes.0.address}"
@@ -83,19 +87,27 @@ resource "aws_s3_bucket_object" "gitlab_bootstrap" {
   server_side_encryption = "AES256"
 }
 
+resource "aws_s3_bucket_object" "gitlab_ssh_host_keys" {
+  key                    = "gitlab/ssh_host_keys.tar.gz"
+  bucket                 = "${aws_s3_bucket.gitlab_init.bucket}"
+  content                = "${file("${path.cwd}/ssh_host_keys.tar.gz")}"
+  server_side_encryption = "AES256"
+}
+
 /*************************************************************************/
 
 data "template_file" "gitlab_ci_env_yml" {
     template = "${file("${path.cwd}/config/gitlab_ci_env.yml")}"
 
     vars {
-        gitlab_external_url = ""
+        gitlab_external_protocol = "http"
+        gitlab_external_host = "${var.gitlab_dns_subdomain}.${var.aws_dns_zone}"
         gitlab_ci_registration_token = "${var.gitlab_ci_registration_token}"
     }
 }
 
 resource "aws_s3_bucket_object" "gitlab_ci_env_yml" {
-  key                    = "gitlab-ci/gitlab-ci-env"
+  key                    = "gitlab-ci/gitlab_ci_env.yml"
   bucket                 = "${aws_s3_bucket.gitlab_init.bucket}"
   content                = "${data.template_file.gitlab_ci_env_yml.rendered}"
   server_side_encryption = "AES256"

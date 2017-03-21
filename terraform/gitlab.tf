@@ -100,7 +100,6 @@ resource "aws_security_group" "gitlab_elb" {
 
 resource "aws_elb" "gitlab" {
   name               = "gitlab"
-  availability_zones = ["${var.aws_az1}"]
   security_groups    = ["${aws_security_group.gitlab_elb.id}"]
   subnets            = ["${aws_subnet.public1.id}"]
   cross_zone_load_balancing   = false
@@ -134,7 +133,8 @@ resource "aws_elb" "gitlab" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 3
-    target              = "HTTP:80/"
+    // check /explore for 200 OK because / redirect 302 to /user/sign_in
+    target              = "HTTP:80/explore"
     interval            = 30
   }
 
@@ -213,25 +213,20 @@ EOF
   ]
 }
 
+
 resource "aws_autoscaling_group" "gitlab" {
   name                      = "gitlab"
-  max_size                  = 3
-  min_size                  = 1
-  desired_capacity          = 2
+  max_size                  = "${var.gitlab_max}"
+  min_size                  = "${var.gitlab_min}"
+  desired_capacity          = "${var.gitlab_desired}"
   vpc_zone_identifier       = ["${aws_subnet.private1.id}"]
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  default_cooldown          = 30
-  force_delete              = false
+  default_cooldown          = 180
+  force_delete              = true
   load_balancers            = ["${aws_elb.gitlab.name}"]
   launch_configuration      = "${aws_launch_configuration.gitlab.name}"
-
-  initial_lifecycle_hook {
-    name                 = "gitlab-scaling"
-    default_result       = "CONTINUE"
-    heartbeat_timeout    = 2000
-    lifecycle_transition = "autoscaling:EC2_INSTANCE_LAUNCHING"
-  }
+  wait_for_capacity_timeout = "15m"
 
   lifecycle {
     create_before_destroy = true
@@ -256,10 +251,16 @@ resource "aws_autoscaling_group" "gitlab" {
     "aws_s3_bucket_object.gitlab_bootstrap"
   ]
 }
+
 /*
+resource "aws_elb_attachment" "gitlab" {
+  elb      = "${aws_elb.gitlab.id}"
+  instance = "${aws_instance.gitlab.id}"
+}
+
 resource "aws_instance" "gitlab" {
   ami                                  = "${data.aws_ami.gitlab.id}"
-  instance_type                        = "t2.micro"
+  instance_type                        = "t2.medium"
   associate_public_ip_address          = false
   subnet_id                            = "${aws_subnet.private1.id}"
   vpc_security_group_ids               = ["${aws_security_group.gitlab.id}"]
@@ -301,6 +302,10 @@ output "gitlab_ami" {
 
 output "gitlab_runner_ami" {
   value = "${data.aws_ami.gitlab_runner.id}"
+}
+
+output "gitlab_address" {
+  value = "${aws_route53_record.gitlab.fqdn}"
 }
 
 /*output "gitlab_private_ip" {

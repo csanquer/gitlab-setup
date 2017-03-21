@@ -18,4 +18,19 @@ redis['enable'] = false
 gitlab_rails['redis_host'] = "{{ gitlab_cache_host }}"
 gitlab_rails['redis_port'] = {{ gitlab_cache_port }}
 
-high_availability['mountpoint'] = '/var/opt/gitlab'
+high_availability['mountpoint'] = '{{ gitlab_data_mountpoint }}'
+git_data_dirs({"default" => "{{ gitlab_data_mountpoint }}/git-data"})
+user['home'] = '{{ gitlab_data_mountpoint }}/'
+gitlab_rails['uploads_directory'] = '{{ gitlab_data_mountpoint }}/gitlab-rails/uploads'
+gitlab_rails['shared_path'] = '{{ gitlab_data_mountpoint }}/gitlab-rails/shared'
+gitlab_ci['builds_directory'] = '{{ gitlab_data_mountpoint }}/gitlab-ci/builds'
+
+web_server['username'] = "gitlab-www"
+web_server['group'] = "gitlab-www"
+web_server['uid'] = 999
+web_server['gid'] = 999
+
+user['username'] = "git"
+user['group'] = "git"
+user['uid'] = 998
+user['gid'] = 998

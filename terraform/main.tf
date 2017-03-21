@@ -68,5 +68,5 @@ output "bastion1_ip" {
 }
 
 output "bastion1_address" {
-  value = "${aws_instance.bastion1.public_dns}"
+  value = "${aws_route53_record.bastion1.fqdn}"
 }
