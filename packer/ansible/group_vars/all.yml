@@ -165,10 +165,10 @@ apt_extra_packages:
   - openssl-blacklist-extra
   - git-extras
   - zsh
-  - jq
 
 aws_eb_cli_enabled: false
 aws_ecs_cli_enabled: false
+aws_ec2metadata_enabled: true
 
 python_pip2_packages:
     - { name: 'jinja2-cli[yaml]'}

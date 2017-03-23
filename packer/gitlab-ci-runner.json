@@ -17,7 +17,7 @@
       "ami_description": "Gitlab CI runner",
       "tags": {
         "application": "gitlab-ci-runner",
-        "version": "1.11.1",
+        "version": "9.0.0",
         "os": "ubuntu",
         "os_release": "16.04"
       }
