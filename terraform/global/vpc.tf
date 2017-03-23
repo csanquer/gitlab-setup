@@ -1,7 +1,3 @@
-data "aws_route53_zone" "selected" {
-  name = "${var.aws_dns_zone}"
-}
-
 resource "aws_vpc" "gitlab" {
   cidr_block           = "${var.vpc_cidr}"
   enable_dns_support   = true
@@ -20,7 +16,9 @@ resource "aws_internet_gateway" "default" {
   }
 }
 
+/********************/
 /*  Public subnets */
+/********************/
 
 /*  Public subnet 1 */
 
@@ -31,7 +29,7 @@ resource "aws_subnet" "public1" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "public"
+    Name = "public subnet 1"
   }
 }
 
@@ -44,7 +42,7 @@ resource "aws_route_table" "public1" {
   }
 
   tags {
-    Name = "Public Subnet"
+    Name = "public subnet 1"
   }
 }
 
@@ -62,7 +60,7 @@ resource "aws_subnet" "public2" {
   map_public_ip_on_launch = true
 
   tags {
-    Name = "public"
+    Name = "public subnet 2"
   }
 }
 
@@ -75,7 +73,7 @@ resource "aws_route_table" "public2" {
   }
 
   tags {
-    Name = "Public Subnet"
+    Name = "public subnet 2"
   }
 }
 
@@ -84,17 +82,18 @@ resource "aws_route_table_association" "public2" {
   route_table_id = "${aws_route_table.public2.id}"
 }
 
+/********************/
 /*  Private subnets */
+/********************/
 
 /* private subnet 1 */
-
 resource "aws_subnet" "private1" {
   vpc_id            = "${aws_vpc.gitlab.id}"
   cidr_block        = "${var.private1_subnet_cidr}"
   availability_zone = "${var.aws_az1}"
 
   tags {
-    Name = "private"
+    Name = "private subnet 1"
   }
 }
 
@@ -107,7 +106,7 @@ resource "aws_route_table" "private1" {
   }
 
   tags {
-    Name = "Private Subnet"
+    Name = "private subnet 1"
   }
 }
 
@@ -124,7 +123,7 @@ resource "aws_subnet" "private2" {
   availability_zone = "${var.aws_az2}"
 
   tags {
-    Name = "private"
+    Name = "private subnet 2"
   }
 }
 
@@ -137,7 +136,7 @@ resource "aws_route_table" "private2" {
   }
 
   tags {
-    Name = "Private Subnet"
+    Name = "private subnet 2"
   }
 }
 
@@ -172,42 +171,9 @@ resource "aws_nat_gateway" "nat2" {
   depends_on = ["aws_internet_gateway.default"]
 }
 
-/* server ips and dns records */
+/* Elastic IPs */
 
 resource "aws_eip" "bastion1" {
   vpc        = true
   instance   = "${aws_instance.bastion1.id}"
 }
-
-resource "aws_route53_record" "bastion1" {
-  zone_id = "${data.aws_route53_zone.selected.zone_id}"
-  name    = "bastion1.${data.aws_route53_zone.selected.name}"
-  type    = "A"
-  ttl     = "300"
-  records = ["${aws_eip.bastion1.public_ip}"]
-}
-
-resource "aws_route53_record" "gitlab" {
-  zone_id = "${data.aws_route53_zone.selected.zone_id}"
-  name    = "${var.gitlab_dns_subdomain}.${data.aws_route53_zone.selected.name}"
-  type    = "A"
-
-  alias {
-    name                   = "${aws_elb.gitlab.dns_name}"
-    zone_id                = "${aws_elb.gitlab.zone_id}"
-    evaluate_target_health = true
-  }
-}
-
-/*resource "aws_eip" "gitlab" {
-  vpc        = true
-  instance   = "${aws_instance.gitlab.id}"
-}
-
-resource "aws_route53_record" "gitlab" {
-  zone_id = "${data.aws_route53_zone.selected.zone_id}"
-  name    = "gitlab.${data.aws_route53_zone.selected.name}"
-  type    = "A"
-  ttl     = "300"
-  records = ["${aws_eip.gitlab.id}"]
-}*/

@@ -1,7 +1,8 @@
 /packer/config.json
-/terraform/terraform.tfvars
-/terraform/terraform.tfstate
-/terraform/terraform.tfstate.backup
-/tmp_ssh_host_keys
-/terraform/ssh_host_keys.tar.gz
+terraform.tfvars
+terraform.tfstate
+terraform.tfstate.backup
+/terraform/gitlab/ssh_host_keys.tar.gz
+.terraform/
 .terraform.tfstate.lock.info
+/graphs

@@ -34,3 +34,7 @@ user['username'] = "git"
 user['group'] = "git"
 user['uid'] = 998
 user['gid'] = 998
+
+nginx['real_ip_trusted_addresses'] = [ '{{ gitlab_proxy_subnets|join('\', \'') }}' ]
+nginx['real_ip_header'] = 'X-Real-IP'
+nginx['real_ip_recursive'] = 'on'

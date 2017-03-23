@@ -11,3 +11,4 @@ gitlab_db_host: "${gitlab_db_host}"
 gitlab_db_port: ${gitlab_db_port}
 gitlab_cache_host: "${gitlab_cache_host}"
 gitlab_cache_port: ${gitlab_cache_port}
+gitlab_proxy_subnets: ["${join('", "', gitlab_proxy_subnets)}"]

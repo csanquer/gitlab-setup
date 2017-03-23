@@ -4,69 +4,57 @@ provider "aws" {
   region     = "${var.aws_region}"
 }
 
-data "aws_ami" "ubuntu_xenial" {
-  most_recent = true
+module "global" {
+  source               = "./global"
 
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+  aws_dns_zone         = "${var.aws_dns_zone}"
+  gitlab_dns_subdomain = "${var.gitlab_dns_subdomain}"
+  aws_az1              = "${var.aws_az1}"
+  aws_az2              = "${var.aws_az2}"
+  vpc_cidr             = "${var.vpc_cidr}"
+  public1_subnet_cidr  = "${var.public1_subnet_cidr}"
+  public2_subnet_cidr  = "${var.public2_subnet_cidr}"
+  private1_subnet_cidr = "${var.private1_subnet_cidr}"
+  private2_subnet_cidr = "${var.private2_subnet_cidr}"
+  sg_ssh_cidr          = "${var.sg_ssh_cidr}"
+  admin_ssh_public_key = "${var.admin_ssh_public_key}"
 }
 
-resource "aws_key_pair" "admin" {
-  key_name   = "admin"
-  public_key = "${var.admin_ssh_public_key}"
+module "gitlab" {
+  source                       = "./gitlab"
+
+  aws_region                   = "${var.aws_region}"
+  aws_dns_zone                 = "${var.aws_dns_zone}"
+  gitlab_max                   = "${var.gitlab_max}"
+  gitlab_min                   = "${var.gitlab_min}"
+  gitlab_desired               = "${var.gitlab_desired}"
+  gitlab_db_name               = "${var.gitlab_db_name}"
+  gitlab_db_username           = "${var.gitlab_db_username}"
+  gitlab_db_password           = "${var.gitlab_db_password}"
+  gitlab_root_password         = "${var.gitlab_root_password}"
+  gitlab_ci_registration_token = "${var.gitlab_ci_registration_token}"
+
+  admin_ssh_key = "${module.global.admin_ssh_key}"
+  vpc_id = "${module.global.vpc_id}"
+  dns_zone_id = "${module.global.dns_zone_id}"
+  dns_zone_name = "${module.global.dns_zone_name}"
+  sg_bastions_id = "${module.global.sg_bastions_id}"
+  private_subnet_ids = "${module.global.private_subnet_ids}"
+  public_subnet_ids = "${module.global.public_subnet_ids}"
 }
 
-resource "aws_security_group" "bastions" {
-  name        = "bastions"
-  description = "Allow SSH access to bastions"
-  vpc_id      = "${aws_vpc.gitlab.id}"
+module "gitlab_ci" {
+  source               = "./gitlab_ci"
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "TCP"
-    cidr_blocks = ["${var.sg_ssh_cidr}"]
-  }
+  gitlab_host  = "${module.gitlab.gitlab_hostname}"
+  gitlab_ci_registration_token = "${var.gitlab_ci_registration_token}"
+  gitlab_init_bucket = "${module.gitlab.gitlab_init_bucket}"
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_instance" "bastion1" {
-  ami                                  = "${data.aws_ami.ubuntu_xenial.id}"
-  instance_type                        = "t2.micro"
-  associate_public_ip_address          = true
-  subnet_id                            = "${aws_subnet.public1.id}"
-  vpc_security_group_ids               = ["${aws_security_group.bastions.id}"]
-  instance_initiated_shutdown_behavior = "terminate"
-  key_name                             = "${aws_key_pair.admin.key_name}"
-
-  tags {
-    Name = "bastion1"
-  }
-}
-
-output "ubuntu_xenial_ami" {
-  value = "${data.aws_ami.ubuntu_xenial.id}"
-}
-
-output "bastion1_ip" {
-  value = "${aws_instance.bastion1.public_ip}"
-}
-
-output "bastion1_address" {
-  value = "${aws_route53_record.bastion1.fqdn}"
+  admin_ssh_key = "${module.global.admin_ssh_key}"
+  vpc_id = "${module.global.vpc_id}"
+  dns_zone_id = "${module.global.dns_zone_id}"
+  dns_zone_name = "${module.global.dns_zone_name}"
+  sg_bastions_id = "${module.global.sg_bastions_id}"
+  private_subnet_ids = "${module.global.private_subnet_ids}"
+  public_subnet_ids = "${module.global.public_subnet_ids}"
 }

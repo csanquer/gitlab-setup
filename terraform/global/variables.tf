@@ -1,11 +1,3 @@
-variable "aws_access_key" {}
-variable "aws_secret_key" {}
-
-variable "aws_region" {
-  description = "AWS EC2 Region for the VPC"
-  default     = "eu-west-1"
-}
-
 variable "aws_dns_zone" {
   description = "AWS Route53 zone"
 }
@@ -57,41 +49,4 @@ variable "sg_ssh_cidr" {
 
 variable "admin_ssh_public_key" {
   description = "SSH public key to connect to EC2 instances"
-}
-
-variable "gitlab_max" {
-  description = "Gitlab maximum instance number"
-  default     = 3
-}
-
-variable "gitlab_min" {
-  description = "Gitlab minimum instance number"
-  default     = 1
-}
-
-variable "gitlab_desired" {
-  description = "Gitlab desired instance number"
-  default     = 2
-}
-
-variable "gitlab_db_name" {
-  description = "Gitlab database name"
-  default     = "gitlab"
-}
-
-variable "gitlab_db_username" {
-  description = "Gitlab database username"
-  default     = "gitlab"
-}
-
-variable "gitlab_db_password" {
-  description = "Gitlab database password"
-}
-
-variable "gitlab_root_password" {
-  description = "Gitlab Root account initial password"
-}
-
-variable "gitlab_ci_registration_token" {
-  description = "Gitlab initial CI registration token"
 }

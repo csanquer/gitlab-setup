@@ -3,7 +3,7 @@ SHELL := $(shell which bash)
 ENV = /usr/bin/env
 # default shell options
 .SHELLFLAGS = -c
-
+format = png
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
 .NOTPARALLEL: ;          # wait for this target to finish
@@ -19,7 +19,7 @@ all:
 # prevent ssh client warnings about ssh host keys to be different
 # between SSH load balancer
 ssh_host_keys:
-	if [ ! -f terraform/ssh_host_keys.tar.gz ]; then \
+	if [ ! -f terraform/gitlab/ssh_host_keys.tar.gz ]; then \
 		rm -rf tmp_ssh_host_keys ;\
 		mkdir -p tmp_ssh_host_keys ;\
 		cd tmp_ssh_host_keys ;\
@@ -27,7 +27,7 @@ ssh_host_keys:
 		ssh-keygen -q -t rsa -N "" -f ssh_host_rsa_key -C "root@gitlab" ;\
 		ssh-keygen -q -t ecdsa -N "" -f ssh_host_ecdsa_key -C "root@gitlab" ;\
 		ssh-keygen -q -t ed25519 -N "" -f ssh_host_ed25519_key -C "root@gitlab" ;\
-		tar -cvzf ../terraform/ssh_host_keys.tar.gz ssh_host_* ;\
+		tar -cvzf ../terraform/gitlab/ssh_host_keys.tar.gz ssh_host_* ;\
 	fi;
 
 config: ssh_host_keys
@@ -44,18 +44,37 @@ ami-runner: config
 	cd packer
 	packer build -var-file=config.json gitlab-ci-runner.json
 
-plan: config
+_get_modules: config
+	cd terraform
+	terraform get
+
+plan: _get_modules
 	cd terraform
 	terraform plan
 
-apply: config
+apply: _get_modules
 	cd terraform
 	terraform apply
 
-output: config
+output: _get_modules
 	cd terraform
 	terraform output
 
-destroy: config
+_graph_dir: _get_modules
+	mkdir -p graphs
+
+_graph:
+	cd terraform
+	terraform graph -type=$(type) -draw-cycles | dot -T$(format) > ../graphs/infra_$(type).$(format)
+
+graphs: _graph_dir
+	make _graph type=plan format=$(format)
+	make _graph type=plan-destroy format=$(format)
+	make _graph type=apply format=$(format)
+	make _graph type=validate format=$(format)
+	make _graph type=input format=$(format)
+	make _graph type=refresh format=$(format)
+
+destroy: _get_modules
 	cd terraform
 	terraform destroy

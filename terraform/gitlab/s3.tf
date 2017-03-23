@@ -1,5 +1,5 @@
 data "template_file" "encrypt_s3" {
-    template = "${file("${path.cwd}/s3_policy/encrypt_s3_object.tpl")}"
+    template = "${file("${path.module}/s3_policy/encrypt_s3_object.tpl")}"
 
     vars {
         bucket_name = "${var.gitlab_secret_bucket}"
@@ -16,13 +16,13 @@ resource "aws_s3_bucket" "gitlab_init" {
   }
 
   tags {
-    Name = "init"
+    Name = "gitlab init"
   }
 }
 /*************************************************************************/
 
 data "template_file" "gitlab_env_yml" {
-    template = "${file("${path.cwd}/config/gitlab_env.yml")}"
+    template = "${file("${path.module}/config/gitlab_env.yml")}"
 
     vars {
         gitlab_external_protocol = "http"
@@ -37,11 +37,12 @@ data "template_file" "gitlab_env_yml" {
         gitlab_db_port = "${aws_db_instance.gitlab.port}"
         gitlab_cache_host = "${aws_elasticache_cluster.gitlab_cache.cache_nodes.0.address}"
         gitlab_cache_port = "${aws_elasticache_cluster.gitlab_cache.cache_nodes.0.port}"
+        //gitlab_proxy_subnets = [ "${module.global.public1_subnet_cidr}", "${module.global.public2_subnet_cidr}" ]
     }
 }
 
 data "template_file" "gitlab_env_sh" {
-    template = "${file("${path.cwd}/config/gitlab_env.sh")}"
+    template = "${file("${path.module}/config/gitlab_env.sh")}"
 
     vars {
         gitlab_external_protocol = "http"
@@ -76,69 +77,20 @@ resource "aws_s3_bucket_object" "gitlab_env_sh" {
 resource "aws_s3_bucket_object" "gitlab_config" {
   key                    = "gitlab/gitlab.rb.j2"
   bucket                 = "${aws_s3_bucket.gitlab_init.bucket}"
-  content                = "${file("${path.cwd}/config/gitlab.rb.j2")}"
+  content                = "${file("${path.module}/config/gitlab.rb.j2")}"
   server_side_encryption = "AES256"
 }
 
 resource "aws_s3_bucket_object" "gitlab_bootstrap" {
   key                    = "gitlab/gitlab_bootstrap.sh"
   bucket                 = "${aws_s3_bucket.gitlab_init.bucket}"
-  content                = "${file("${path.cwd}/config/gitlab_bootstrap.sh")}"
+  content                = "${file("${path.module}/config/gitlab_bootstrap.sh")}"
   server_side_encryption = "AES256"
 }
 
 resource "aws_s3_bucket_object" "gitlab_ssh_host_keys" {
   key                    = "gitlab/ssh_host_keys.tar.gz"
   bucket                 = "${aws_s3_bucket.gitlab_init.bucket}"
-  content                = "${file("${path.cwd}/ssh_host_keys.tar.gz")}"
+  content                = "${file("${path.module}/ssh_host_keys.tar.gz")}"
   server_side_encryption = "AES256"
-}
-
-/*************************************************************************/
-
-data "template_file" "gitlab_ci_env_yml" {
-    template = "${file("${path.cwd}/config/gitlab_ci_env.yml")}"
-
-    vars {
-        gitlab_external_protocol = "http"
-        gitlab_external_host = "${var.gitlab_dns_subdomain}.${var.aws_dns_zone}"
-        gitlab_ci_registration_token = "${var.gitlab_ci_registration_token}"
-    }
-}
-
-resource "aws_s3_bucket_object" "gitlab_ci_env_yml" {
-  key                    = "gitlab-ci/gitlab_ci_env.yml"
-  bucket                 = "${aws_s3_bucket.gitlab_init.bucket}"
-  content                = "${data.template_file.gitlab_ci_env_yml.rendered}"
-  server_side_encryption = "AES256"
-}
-
-/*************************************************************************/
-
-output "gitlab_init_bucket_arn" {
-  value = "${aws_s3_bucket.gitlab_init.arn}"
-}
-
-output "gitlab_init_bucket_name" {
-  value = "${aws_s3_bucket.gitlab_init.bucket}"
-}
-
-output "gitlab_config_bucket_key" {
-  value = "${aws_s3_bucket_object.gitlab_config.key}"
-}
-
-output "gitlab_bootstrap_bucket_key" {
-  value = "${aws_s3_bucket_object.gitlab_bootstrap.key}"
-}
-
-output "gitlab_env_sh_bucket_key" {
-  value = "${aws_s3_bucket_object.gitlab_env_sh.key}"
-}
-
-output "gitlab_env_yml_bucket_key" {
-  value = "${aws_s3_bucket_object.gitlab_env_yml.key}"
-}
-
-output "gitlab_ci_env_yml_bucket_key" {
-  value = "${aws_s3_bucket_object.gitlab_ci_env_yml.key}"
 }
