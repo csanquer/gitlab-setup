@@ -172,3 +172,26 @@ aws_ec2metadata_enabled: true
 
 python_pip2_packages:
     - { name: 'jinja2-cli[yaml]'}
+
+gitlab_external_url: ""
+
+gitlab_user_uid: 998
+gitlab_user_gid: 998
+
+gitlab_redis_uid: 997
+gitlab_redis_gid: 997
+
+gitlab_registry_uid: 994
+gitlab_registry_gid: 994
+
+gitlab_postgresql_uid: 996
+gitlab_postgresql_gid: 996
+
+gitlab_mattermost_uid: 993
+gitlab_mattermost_gid: 993
+
+gitlab_prometheus_uid: 995
+gitlab_prometheus_gid: 995
+
+gitlab_web_server_uid: 999
+gitlab_web_server_gid: 999
