@@ -36,4 +36,6 @@ mount -a -t nfs4
 
 # generate gitlab config file and reconfigure gitlab server
 jinja2 $scriptDir/gitlab.rb.j2 $scriptDir/gitlab_env.yml > /etc/gitlab/gitlab.rb
+
 gitlab-ctl reconfigure
+gitlab-ctl status

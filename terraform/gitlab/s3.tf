@@ -37,7 +37,8 @@ data "template_file" "gitlab_env_yml" {
         gitlab_db_port = "${aws_db_instance.gitlab.port}"
         gitlab_cache_host = "${aws_elasticache_cluster.gitlab_cache.cache_nodes.0.address}"
         gitlab_cache_port = "${aws_elasticache_cluster.gitlab_cache.cache_nodes.0.port}"
-        //gitlab_proxy_subnets = [ "${module.global.public1_subnet_cidr}", "${module.global.public2_subnet_cidr}" ]
+        gitlab_proxy_subnet1 = "${var.public1_subnet_cidr}"
+        gitlab_proxy_subnet2 = "${var.public2_subnet_cidr}"
     }
 }
 
@@ -91,6 +92,8 @@ resource "aws_s3_bucket_object" "gitlab_bootstrap" {
 resource "aws_s3_bucket_object" "gitlab_ssh_host_keys" {
   key                    = "gitlab/ssh_host_keys.tar.gz"
   bucket                 = "${aws_s3_bucket.gitlab_init.bucket}"
-  content                = "${file("${path.module}/ssh_host_keys.tar.gz")}"
+  content_type           = "application/gzip"
+  content_encoding       = "gzip"
+  source                 = "${path.module}/ssh_host_keys.tar.gz"
   server_side_encryption = "AES256"
 }

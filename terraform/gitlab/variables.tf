@@ -12,18 +12,33 @@ variable "gitlab_dns_subdomain" {
   default     = "gitlab"
 }
 
+variable "public1_subnet_cidr" {
+  description = "CIDR for the Public 1 Subnet"
+  default     = "10.0.0.0/24"
+}
+
+variable "public2_subnet_cidr" {
+  description = "CIDR for the Public 2 Subnet"
+  default     = "10.0.2.0/24"
+}
+
+variable "gitlab_static_instances" {
+  description = "Gitlab static instances number"
+  default     = 0
+}
+
 variable "gitlab_max" {
-  description = "Gitlab maximum instance number"
+  description = "Gitlab autoscale maximum instance number"
   default     = 3
 }
 
 variable "gitlab_min" {
-  description = "Gitlab minimum instance number"
+  description = "Gitlab autoscale minimum instance number"
   default     = 1
 }
 
 variable "gitlab_desired" {
-  description = "Gitlab desired instance number"
+  description = "Gitlab autoscale desired instance number"
   default     = 2
 }
 
@@ -66,5 +81,9 @@ variable "vpc_id" {}
 variable "dns_zone_id" {}
 variable "dns_zone_name" {}
 variable "sg_bastions_id" {}
-variable "private_subnet_ids" {}
-variable "public_subnet_ids" {}
+variable "private_subnet_ids" {
+  type = "map"
+}
+variable "public_subnet_ids" {
+  type = "map"
+}

@@ -56,16 +56,30 @@ resource "aws_iam_instance_profile" "gitlab_ci_instance_profile" {
 }
 
 resource "aws_security_group" "gitlab_ci" {
-  name        = "gitlab"
+  name        = "gitlab_ci"
   description = "Allow inbound traffic on gitlab ci runner instances"
   vpc_id      = "${var.vpc_id}"
 
-  /*ingress {
+  ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "TCP"
+    security_groups = ["${var.sg_bastions_id}", "${var.sg_gitlab_id}"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "TCP"
     cidr_blocks = ["0.0.0.0/0"]
-  }*/
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "TCP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
     from_port   = 0
@@ -75,7 +89,7 @@ resource "aws_security_group" "gitlab_ci" {
   }
 }
 
-resource "aws_instance" "gitlab" {
+resource "aws_instance" "gitlab_ci" {
   ami                                  = "${data.aws_ami.gitlab_runner.id}"
   instance_type                        = "t2.micro"
   associate_public_ip_address          = false

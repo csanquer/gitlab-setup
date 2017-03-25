@@ -19,11 +19,14 @@ gitlab_rails['redis_host'] = "{{ gitlab_cache_host }}"
 gitlab_rails['redis_port'] = {{ gitlab_cache_port }}
 
 high_availability['mountpoint'] = '{{ gitlab_data_mountpoint }}'
-git_data_dirs({"default" => "{{ gitlab_data_mountpoint }}/git-data"})
-user['home'] = '{{ gitlab_data_mountpoint }}/'
-gitlab_rails['uploads_directory'] = '{{ gitlab_data_mountpoint }}/gitlab-rails/uploads'
-gitlab_rails['shared_path'] = '{{ gitlab_data_mountpoint }}/gitlab-rails/shared'
-gitlab_ci['builds_directory'] = '{{ gitlab_data_mountpoint }}/gitlab-ci/builds'
+git_data_dirs({"default" => "{{ gitlab_data_mountpoint }}/gitlab/git-data"})
+git_data_dirs({ "default" => { "path" => "{{ gitlab_data_mountpoint }}/gitlab/git-data" } })
+user['home'] = '{{ gitlab_data_mountpoint }}/gitlab/'
+gitlab_rails['uploads_directory'] = '{{ gitlab_data_mountpoint }}/gitlab/gitlab-rails/uploads'
+gitlab_rails['shared_path'] = '{{ gitlab_data_mountpoint }}/gitlab/gitlab-rails/shared'
+gitlab_rails['registry_path'] = "{{ gitlab_data_mountpoint }}/gitlab/gitlab-rails/shared/registry"
+gitlab_rails['lfs_storage_path'] = '{{ gitlab_data_mountpoint }}/gitlab/lfs-objects'
+gitlab_ci['builds_directory'] = '{{ gitlab_data_mountpoint }}/gitlab/gitlab-ci/builds'
 
 web_server['username'] = "gitlab-www"
 web_server['group'] = "gitlab-www"
@@ -35,6 +38,21 @@ user['group'] = "git"
 user['uid'] = 998
 user['gid'] = 998
 
-nginx['real_ip_trusted_addresses'] = [ '{{ gitlab_proxy_subnets|join('\', \'') }}' ]
+registry['uid'] = 994
+registry['gid'] = 994
+
+redis['uid'] = 997
+redis['gid'] = 997
+
+postgresql['uid'] = 996
+postgresql['gid'] = 996
+
+prometheus['uid'] = 995
+prometheus['gid'] = 995
+
+mattermost['uid'] = 993
+mattermost['gid'] = 993
+
+nginx['real_ip_trusted_addresses'] = [{% if gitlab_proxy_subnets|length > 0 %}'{{ gitlab_proxy_subnets|join('\', \'') }}'{% endif %}]
 nginx['real_ip_header'] = 'X-Real-IP'
 nginx['real_ip_recursive'] = 'on'

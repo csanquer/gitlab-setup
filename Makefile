@@ -20,6 +20,7 @@ all:
 # between SSH load balancer
 ssh_host_keys:
 	if [ ! -f terraform/gitlab/ssh_host_keys.tar.gz ]; then \
+		echo "generating Gitlab ssh host keys" \
 		rm -rf tmp_ssh_host_keys ;\
 		mkdir -p tmp_ssh_host_keys ;\
 		cd tmp_ssh_host_keys ;\
@@ -55,6 +56,10 @@ plan: _get_modules
 apply: _get_modules
 	cd terraform
 	terraform apply
+
+refresh: _get_modules
+	cd terraform
+	terraform refresh
 
 output: _get_modules
 	cd terraform

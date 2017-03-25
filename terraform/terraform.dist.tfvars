@@ -7,7 +7,7 @@ aws_az2 = "eu-west-1b"
 
 admin_ssh_public_key =
 
-sg_ssh_cidr =
+sg_ssh_cidr = "0.0.0.0/0"
 
 gitlab_db_password =
 gitlab_root_password =
@@ -15,3 +15,8 @@ gitlab_ci_registration_token =
 
 aws_dns_zone =
 gitlab_dns_subdomain = "gitlab"
+
+gitlab_static_instances = 0
+gitlab_max = 3
+gitlab_min = 1
+gitlab_desired = 2

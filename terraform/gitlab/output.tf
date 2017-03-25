@@ -2,6 +2,10 @@ output "gitlab_hostname" {
   value = "${var.gitlab_dns_subdomain}.${var.aws_dns_zone}"
 }
 
+output "sg_gitlab_id" {
+  value = "${aws_security_group.gitlab.id}"
+}
+
 output "gitlab_init_bucket_arn" {
   value = "${aws_s3_bucket.gitlab_init.arn}"
 }

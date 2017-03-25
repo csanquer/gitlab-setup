@@ -17,5 +17,7 @@ variable "vpc_id" {}
 variable "dns_zone_id" {}
 variable "dns_zone_name" {}
 variable "sg_bastions_id" {}
-variable "private_subnet_ids" {}
-variable "public_subnet_ids" {}
+variable "sg_gitlab_id" {}
+variable "private_subnet_ids" {
+  type = "map"
+}

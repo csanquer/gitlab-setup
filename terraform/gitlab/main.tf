@@ -64,6 +64,13 @@ resource "aws_security_group" "gitlab" {
     from_port   = 22
     to_port     = 22
     protocol    = "TCP"
+    security_groups = ["${var.sg_bastions_id}"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "TCP"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -89,9 +96,8 @@ resource "aws_security_group" "gitlab" {
   }
 }
 
-
 resource "aws_launch_configuration" "gitlab" {
-  name_prefix               = "gitlab-"
+  name_prefix               = "gitlab-autoscale-"
   image_id                  = "${data.aws_ami.gitlab.id}"
   instance_type             = "t2.medium"
   key_name                  = "${var.admin_ssh_key}"
@@ -135,7 +141,7 @@ resource "aws_autoscaling_group" "gitlab" {
   vpc_zone_identifier       = ["${var.private_subnet_ids["private1"]}"]
   health_check_grace_period = 300
   health_check_type         = "ELB"
-  default_cooldown          = 180
+  default_cooldown          = 300
   force_delete              = true
   load_balancers            = ["${aws_elb.gitlab.name}"]
   launch_configuration      = "${aws_launch_configuration.gitlab.name}"
@@ -148,6 +154,12 @@ resource "aws_autoscaling_group" "gitlab" {
   tag {
     key                 = "application"
     value               = "gitlab"
+    propagate_at_launch = true
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "gitlab-autoscale"
     propagate_at_launch = true
   }
 
@@ -165,20 +177,21 @@ resource "aws_autoscaling_group" "gitlab" {
   ]
 }
 
-/*
 resource "aws_elb_attachment" "gitlab" {
+  count    = "${var.gitlab_static_instances}"
   elb      = "${aws_elb.gitlab.id}"
-  instance = "${aws_instance.gitlab.id}"
+  instance = "${element(aws_instance.gitlab.*.id, count.index)}"
 }
 
 resource "aws_instance" "gitlab" {
+  count                                = "${var.gitlab_static_instances}"
   ami                                  = "${data.aws_ami.gitlab.id}"
   instance_type                        = "t2.medium"
   associate_public_ip_address          = false
-  subnet_id                            = "${aws_subnet.private1.id}"
+  subnet_id                            = "${var.private_subnet_ids["private1"]}"
   vpc_security_group_ids               = ["${aws_security_group.gitlab.id}"]
   instance_initiated_shutdown_behavior = "terminate"
-  key_name                             = "${aws_key_pair.admin.key_name}"
+  key_name                             = "${var.admin_ssh_key}"
   iam_instance_profile                 = "${aws_iam_instance_profile.gitlab_instance_profile.id}"
 
   user_data = <<EOF
@@ -192,7 +205,8 @@ output: { all : '| tee -a /var/log/cloud-init-output.log' }
 EOF
 
   tags {
-    Name = "gitlab"
+    Name        = "gitlab-static-${count.index + 1}"
+    application = "gitlab"
   }
 
   depends_on = [
@@ -207,4 +221,4 @@ EOF
     "aws_s3_bucket_object.gitlab_config",
     "aws_s3_bucket_object.gitlab_bootstrap"
   ]
-}*/
+}

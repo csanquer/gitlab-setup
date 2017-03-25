@@ -59,18 +59,23 @@ variable "admin_ssh_public_key" {
   description = "SSH public key to connect to EC2 instances"
 }
 
+variable "gitlab_static_instances" {
+  description = "Gitlab static instances number"
+  default     = 0
+}
+
 variable "gitlab_max" {
-  description = "Gitlab maximum instance number"
+  description = "Gitlab autoscale maximum instance number"
   default     = 3
 }
 
 variable "gitlab_min" {
-  description = "Gitlab minimum instance number"
+  description = "Gitlab autoscale minimum instance number"
   default     = 1
 }
 
 variable "gitlab_desired" {
-  description = "Gitlab desired instance number"
+  description = "Gitlab autoscale desired instance number"
   default     = 2
 }
 
