@@ -35,7 +35,7 @@ resource "aws_security_group" "gitlab_elb" {
 resource "aws_elb" "gitlab" {
   name               = "gitlab"
   security_groups    = ["${aws_security_group.gitlab_elb.id}"]
-  subnets            = ["${var.public_subnet_ids["public1"]}"]
+  subnets            = ["${var.public_subnet_ids["public1"]}", "${var.public_subnet_ids["public2"]}"]
   cross_zone_load_balancing   = false
   idle_timeout                = 400
   connection_draining         = true

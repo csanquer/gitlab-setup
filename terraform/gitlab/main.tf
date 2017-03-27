@@ -138,7 +138,7 @@ resource "aws_autoscaling_group" "gitlab" {
   max_size                  = "${var.gitlab_max}"
   min_size                  = "${var.gitlab_min}"
   desired_capacity          = "${var.gitlab_desired}"
-  vpc_zone_identifier       = ["${var.private_subnet_ids["private1"]}"]
+  vpc_zone_identifier       = ["${var.private_subnet_ids["private1"]}", "${var.private_subnet_ids["private2"]}"]
   health_check_grace_period = 300
   health_check_type         = "ELB"
   default_cooldown          = 300
