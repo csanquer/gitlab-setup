@@ -3,6 +3,7 @@ SHELL := $(shell which bash)
 ENV = /usr/bin/env
 # default shell options
 .SHELLFLAGS = -c
+SSH_KEY_COMMENT = "root@gitlab"
 format = png
 .SILENT: ;               # no need for @
 .ONESHELL: ;             # recipes execute in same shell
@@ -20,15 +21,17 @@ all:
 # between SSH load balancer
 ssh_host_keys:
 	if [ ! -f terraform/gitlab/ssh_host_keys.tar.gz ]; then \
-		echo "generating Gitlab ssh host keys" \
+		echo "generating Gitlab ssh host keys";\
 		rm -rf tmp_ssh_host_keys ;\
 		mkdir -p tmp_ssh_host_keys ;\
 		cd tmp_ssh_host_keys ;\
-		ssh-keygen -q -t dsa -N "" -f ssh_host_dsa_key -C "root@gitlab" ;\
-		ssh-keygen -q -t rsa -N "" -f ssh_host_rsa_key -C "root@gitlab" ;\
-		ssh-keygen -q -t ecdsa -N "" -f ssh_host_ecdsa_key -C "root@gitlab" ;\
-		ssh-keygen -q -t ed25519 -N "" -f ssh_host_ed25519_key -C "root@gitlab" ;\
+		ssh-keygen -q -t dsa -N "" -f ssh_host_dsa_key -C $(SSH_KEY_COMMENT) ;\
+		ssh-keygen -q -t rsa -N "" -f ssh_host_rsa_key -C $(SSH_KEY_COMMENT) ;\
+		ssh-keygen -q -t ecdsa -N "" -f ssh_host_ecdsa_key -C $(SSH_KEY_COMMENT) ;\
+		ssh-keygen -q -t ed25519 -N "" -f ssh_host_ed25519_key -C $(SSH_KEY_COMMENT) ;\
 		tar -cvzf ../terraform/gitlab/ssh_host_keys.tar.gz ssh_host_* ;\
+		cd .. ;\
+		rm -rf tmp_ssh_host_keys ;\
 	fi;
 
 config: ssh_host_keys
@@ -79,6 +82,7 @@ graphs: _graph_dir
 	make _graph type=validate format=$(format)
 	make _graph type=input format=$(format)
 	make _graph type=refresh format=$(format)
+	echo "Graphs exported to graphs directory"
 
 destroy: _get_modules
 	cd terraform

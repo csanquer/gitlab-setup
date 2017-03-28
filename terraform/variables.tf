@@ -11,8 +11,13 @@ variable "aws_dns_zone" {
 }
 
 variable "gitlab_dns_subdomain" {
-  description = "AWS Route53 zone"
+  description = "Gitlab DNS subdomain"
   default     = "gitlab"
+}
+
+variable "bastion_dns_subdomain" {
+  description = "Bastion DNS subdomain"
+  default     = "bastion1"
 }
 
 variable "aws_az1" {

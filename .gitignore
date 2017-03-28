@@ -3,6 +3,7 @@ terraform.tfvars
 terraform.tfstate
 terraform.tfstate.backup
 /terraform/gitlab/ssh_host_keys.tar.gz
+/tmp_ssh_host_keys
 .terraform/
 .terraform.tfstate.lock.info
 /graphs

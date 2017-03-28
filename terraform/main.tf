@@ -8,7 +8,7 @@ module "global" {
   source               = "./global"
 
   aws_dns_zone         = "${var.aws_dns_zone}"
-  gitlab_dns_subdomain = "${var.gitlab_dns_subdomain}"
+  bastion_dns_subdomain = "${var.bastion_dns_subdomain}"
   aws_az1              = "${var.aws_az1}"
   aws_az2              = "${var.aws_az2}"
   vpc_cidr             = "${var.vpc_cidr}"
