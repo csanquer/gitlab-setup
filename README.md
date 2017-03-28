@@ -77,8 +77,8 @@ Usage
 
 After creation, wait for a few minutes the autoscaled gitlab instances finish self initialization.
 
-if variables are set in `packer/config.json` like :
-```
+if variables are set in `terraform/terraform.tvars` like :
+```hcl
 aws_dns_zone = "my-aws.net"
 gitlab_dns_subdomain = "gitlab"
 ```
