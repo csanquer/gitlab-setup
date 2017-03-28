@@ -35,6 +35,12 @@ Requirements
 Usage
 -----
 
+### Download the terraform and packer templates
+
+```sh
+git clone --recursive https://github.com/csanquer/gitlab-setup.git
+```
+
 ### To create the Gitlab infrastructure
 
 1. Copy and edit the configuration files :
