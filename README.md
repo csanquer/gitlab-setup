@@ -45,7 +45,7 @@ git clone --recursive https://github.com/csanquer/gitlab-setup.git
 
 1. Copy and edit the configuration files :
 
-  * **terraform** : `terraform/terraform.dist.tvars` to `terraform/terraform.tvars`
+  * **terraform** : `terraform/terraform.dist.tfvars` to `terraform/terraform.tfvars`
   * **packer** : `packer/config.dist.json` to `packer/config.json`
   
 2. create Amazon Machine Images :
